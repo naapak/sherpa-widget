@@ -35,10 +35,10 @@ export interface Requirement {
 }
 
 @Component({
-  selector: "custom-root",
+  // selector: "custom-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.sass"],
-  // encapsulation: ViewEncapsulation.ShadowDom
+  styleUrls: ["./app.component.css"],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 export class AppComponent implements OnChanges {
   @Input() content: String;
@@ -66,26 +66,29 @@ export class AppComponent implements OnChanges {
     this.column1 = window.innerWidth <= 900 ? 4 : 1;
     this.column2 = window.innerWidth <= 900 ? 4 : 4 - Number(this.column1);
     this.row1 = this.column1 === 4 ? 6 : 8;
+    console.log('content is', changes.content);
 
     const newRequirement: Requirement = JSON.parse(
       changes.content.currentValue
     );
+    if (newRequirement.hasOwnProperty('defaultNationalityCountry')) {
 
-    if (Object.keys(this.alpha_2).length !== 0) {
-      this.defaultCountry = this.countries.countries.filter(country => {
-        if (country["alpha_2"] === newRequirement.defaultNationalityCountry) {
-          this.selectedCountry = country["name"];
-          return true;
-        }
-      });
+      if (Object.keys(this.alpha_2).length !== 0) {
+        this.defaultCountry = this.countries.countries.filter(country => {
+          if (country["alpha_2"] === newRequirement.defaultNationalityCountry) {
+            this.selectedCountry = country["name"];
+            return true;
+          }
+        });
+      }
+
+      this.requirement = newRequirement;
+
+      this.getCountries(newRequirement.language);
+      this.destination = this.requirement.finalAirportName;
+      this.getSherpaData();
+      this.setrow();
     }
-
-    this.requirement = newRequirement;
-
-    this.getCountries(newRequirement.language);
-    this.destination = this.requirement.finalAirportName;
-    this.getSherpaData();
-    this.setrow();
   }
 
   setrow() {
@@ -128,7 +131,7 @@ export class AppComponent implements OnChanges {
               this.selectedCountry = country["name"];
             }
           });
-          countries.localization["visaRequirementsFor"] = countries.localization["visaRequirementsFor"].replace('{{destination}}',this.requirement.finalAirportName);
+          countries.localization["visaRequirementsFor"] = countries.localization["visaRequirementsFor"].replace('{{destination}}', this.requirement.finalAirportName);
         });
     }
   }
@@ -141,7 +144,7 @@ export class AppComponent implements OnChanges {
   }
 
   getSherpaData() {
-    this.loading = false;
+    this.loading = true;
     this.sameCountry = false;
     this.results = [];
     if (this.requirement.itinerary) {
@@ -175,7 +178,7 @@ export class AppComponent implements OnChanges {
         console.log('i got the data')
         this.loading = false;
         this.results.push(data);
-       
+        console.log('results', this.results)
       });
   }
 }

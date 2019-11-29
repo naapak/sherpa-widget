@@ -1,3 +1,5 @@
+
+
 <mat-toolbar color="primary">
   <!-- <mat-icon
     class="header-icon"
@@ -14,7 +16,7 @@
     class="grid-tiles grey "
     [colspan]="column1"
     [rowspan]="row1"
-    style="height: calc(100vh - 24px)"
+    
   >
     <div *ngIf="countries" class="margin20">
       <p>{{ countries["localization"]["checkRequirements"] }}</p>
@@ -51,7 +53,7 @@
     class="grid-tiles"
     [colspan]="column2"
     [rowspan]="7"
-    style="height: calc(100vh - 24px)"
+    
   >
     <div *ngIf="sameCountry; else getData" >
       <div class='noVisa'></div>
@@ -101,7 +103,7 @@
     class="review grid-tiles"
     [colspan]="column2"
     [rowspan]="1"
-    style="height: calc(100vh - 24px)"
+   
   >
     <div class="disclaimer">
       <span style="padding-right: 12px;" *ngIf="countries">{{
@@ -119,3 +121,5 @@
     </div>
   </mat-grid-tile>
 </mat-grid-list>
+
+

@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
   <body>
+      
     <!-- <div id='sherpa'></div> -->
     <div class="demo">
       <div class="options">
@@ -28,9 +29,10 @@
     <div class="page">
       <pre id="json"></pre>
     </div>
-
+    <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
     <script>
       // SDK events:
+      wrap(document.body)
       var eventTypes = [
         "sdkLoaded",
         "iframeStartLoading",
