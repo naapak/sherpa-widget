@@ -1,5 +1,20 @@
 # Widget
 
+This is a Angular Widget for Sherpa Travel Requirement. It is working with few css styling issues. You download the shepa-widjet.js and implement into your site. Adding `<sherpa-widget></sherpa-widget>` to you DOM will activate the widget. Options that needs to passed are with setAttribute content to widget to access the content.
+`var widgetOptions = {
+          affiliateId: "jdfdfdf",
+          defaultNationalityCountry: "CA",
+          finalAirportName: "JFK - John F. Kennedy International Airport",
+          language: "en",
+          currency: "EUR",
+          itinerary: _getItinerary(1),
+          travellers,
+          language: "en"
+        };
+   
+`
+
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.8.
 
 ## Development server
