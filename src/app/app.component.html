@@ -1,0 +1,121 @@
+<mat-toolbar color="primary">
+  <!-- <mat-icon
+    class="header-icon"
+    aria-hidden="false"
+    aria-label="Example user verified icon"
+    >card_travel</mat-icon
+  > -->
+  <span *ngIf="countries">
+    {{ countries["localization"]["visaRequirementsFor"] }}
+  </span>
+</mat-toolbar>
+<mat-grid-list cols="4" rowHeight={{row}} (window:resize)="onResize($event)">
+  <mat-grid-tile
+    class="grid-tiles grey "
+    [colspan]="column1"
+    [rowspan]="row1"
+    style="height: calc(100vh - 24px)"
+  >
+    <div *ngIf="countries" class="margin20">
+      <p>{{ countries["localization"]["checkRequirements"] }}</p>
+      <mat-form-field style="display: block !important;">
+        <span style="width:30% ;position: relative; padding-right: 5px;">
+          <img
+            src="https://sdk-staging.joinsherpa.io/cdn/country-flags/{{
+              alpha_2[selectedCountry]
+            }}.svg"
+          />
+        </span>
+        <mat-select
+          name="selectedValue"
+          [(ngModel)]="selectedCountry"
+          (ngModelChange)="setCountryChanged()"
+          style="max-width:64%; margin-left: 15px;overflow: hidden;vertical-align: top;"
+        >
+          <mat-option
+            *ngFor="let country of countries['countries']"
+            [value]="country['name']"
+          >
+            <img
+              src="https://sdk-staging.joinsherpa.io/cdn/country-flags/{{
+                country['alpha_2']
+              }}.svg"
+            />
+            {{ country["name"] }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile
+    class="grid-tiles"
+    [colspan]="column2"
+    [rowspan]="7"
+    style="height: calc(100vh - 24px)"
+  >
+    <div *ngIf="sameCountry; else getData" >
+      <div class='noVisa'></div>
+      <p>
+      {{ countries["localization"]["generalJustFine"] }}
+      </p>
+    </div>
+    <ng-template #getData>
+      <mat-progress-bar
+        mode="indeterminate"
+        *ngIf="loading; else elseBlock"
+      ></mat-progress-bar>
+      <ng-template #elseBlock>
+        <mat-list class="results-body">
+          <mat-list-item
+            class="results-list"
+            *ngFor="let result of results; last as last"
+          >
+            <div *ngFor="let visa of result['visa']">
+              <div *ngIf="visa['availableVisas']" style="padding-top: 30px;">
+                <h3>{{ visa["availableVisas"][0]["name"] }}</h3>
+              </div>
+              <table class="result-item__header visa['textual']['class']">
+                <td>
+                  <img
+                    src="https://sdk-staging.joinsherpa.io/cdn/country-flags/{{
+                      visa['country2']
+                    }}.svg"
+                  />
+                </td>
+                <td>
+                  <p>
+                    <span *ngFor="let text of visa['textual']['text']"
+                      >{{ text }}
+                    </span>
+                  </p>
+                </td>
+              </table>
+            </div>
+            <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+          </mat-list-item>
+        </mat-list>
+      </ng-template>
+    </ng-template>
+  </mat-grid-tile>
+  <mat-grid-tile
+    class="review grid-tiles"
+    [colspan]="column2"
+    [rowspan]="1"
+    style="height: calc(100vh - 24px)"
+  >
+    <div class="disclaimer">
+      <span style="padding-right: 12px;" *ngIf="countries">{{
+        countries["localization"]["preDisclaimer"]
+      }}</span>
+      <a href="https://www.joinsherpa.com/terms-conditions/" target="_blank">
+        Disclaimer</a
+      >
+      <mat-icon
+        class="header-icon"
+        aria-hidden="false"
+        aria-label="Example user verified icon"
+        >launch</mat-icon
+      >
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>

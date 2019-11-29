@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SherpaWidget</title>
+    <base href="/" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+      <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+  <body>
+    <!-- <div id='sherpa'></div> -->
+    <div class="demo">
+      <div class="options">
+        <div id="lang"></div>
+        <div id="nationality"></div>
+        <div id="destination"></div>
+      </div>
+    </div>
+    <div class="pre-demo"></div>
+
+    <div style="max-width: 1200px;margin: 0 auto;">
+      <sherpa-widget></sherpa-widget>
+    </div>
+
+    <div class="page">
+      <pre id="json"></pre>
+    </div>
+
+    <script>
+      // SDK events:
+      var eventTypes = [
+        "sdkLoaded",
+        "iframeStartLoading",
+        "iframeSuccess",
+        "iframeFailure",
+        "orderSuccess",
+        "orderDecline",
+        "modalClose"
+      ];
+      /**
+       * Demo data
+       */
+      var lang = [
+        "ar",
+        "de",
+        "dk",
+        "is",
+        "fi",
+        "en",
+        "es",
+        "fr",
+        "it",
+        "no",
+        "ru",
+        "sv",
+        "zh"
+      ];
+      var nationality = ["AU", "VN", "CA", "FR", "EG", "IS", "JP"];
+      var destinations = [
+        [
+          {
+            country: "VN",
+            airportCode: "HAN"
+          },
+          {
+            country: "US",
+            airportCode: "234"
+          },
+          {
+            country: "JP",
+            airportCode: "234"
+          }
+        ],
+        [
+          {
+            country: "TR",
+            airportCode: ""
+          }
+        ],
+        [
+          {
+            country: "CA",
+            airportCode: ""
+          }
+        ],
+        [
+          {
+            country: "US",
+            airportCode: ""
+          }
+        ],
+        [
+          {
+            country: "EG",
+            airportCode: "ABZ"
+          },
+          {
+            country: "IN",
+            airportCode: "AMD"
+          }
+        ],
+        [
+          {
+            country: "EG",
+            airportCode: "ABZ"
+          },
+          {
+            country: "IN",
+            airportCode: "AMD"
+          },
+          {
+            country: "JP",
+            airportCode: "234"
+          }
+        ],
+        [
+          {
+            country: "JP",
+            airportCode: "234"
+          }
+        ],
+        [
+          {
+            country: "VN",
+            airportCode: "123"
+          },
+          {
+            country: "IT",
+            airportCode: "123"
+          },
+          {
+            country: "JP",
+            airportCode: "234"
+          }
+        ]
+      ];
+
+      var travellers = [
+        {
+          givenNames: "Jon",
+          surname: "Doe",
+          dateOfBirth: "1985-07-11",
+          nationality: "AUS",
+          countryOfBirth: "AUS",
+          placeOfBirth: "Perth",
+          passportIssuingCountry: "AUS",
+          passportNumber: "N1231234",
+          passportIssueDate: "2015-07-11",
+          passportExpiryDate: "2025-07-11",
+          passportIssuingAuthority: "Australia",
+          sex: "MALE",
+          email: "jdoe@example.com",
+          phoneType: "MOBILE",
+          phoneCountryCode: "AU",
+          phoneNumber: "1231231234",
+          residence: {
+            streetNumber: "11",
+            street: "Yonge Street",
+            streetLine2: "building2",
+            unit: "1800",
+            city: "Perth",
+            state: "WA",
+            postalCode: "9999",
+            country: "AUS"
+          }
+        }
+      ];
+
+      const sherpaWidget = document.querySelector("sherpa-widget");
+
+      var demo = (function() {
+        var _arrivalDate = (function() {
+          var someDate = new Date();
+          var numberOfDaysToAdd = 6;
+          someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
+          var dd = someDate.getDate();
+          var mm = someDate.getMonth() + 1;
+          var y = someDate.getFullYear();
+
+          mm = mm.toString().length === 1 ? "0" + mm : mm;
+          dd = dd.toString().length === 1 ? "0" + dd : dd;
+
+          return new Date(y + "-" + mm + "-" + dd).toISOString();
+        })();
+
+        var _getItinerary = function(combinationIndex) {
+          var destination = destinations[combinationIndex];
+          var result = [];
+          destination.forEach(function(obj) {
+            result.push({
+              destinationCountry: obj.country,
+              arrivalAirportCode: obj.airportCode,
+              arrivalDate: _arrivalDate,
+              arrivalTime: "15:22"
+            });
+          });
+          return result;
+        };
+
+        var widgetOptions = {
+          affiliateId: "icelandair",
+          defaultNationalityCountry: "CA",
+          finalAirportName: "JFK - John F. Kennedy International Airport",
+          language: "en",
+          currency: "EUR",
+          itinerary: _getItinerary(1),
+          travellers,
+          language: "en"
+        };
+
+        var generateOptionsFor = function(appendTo, list) {
+          list.forEach(function(listElement, index) {
+            var node = document.createElement("div");
+            var html = listElement;
+            var funcInput = listElement;
+            if (
+              typeof listElement === "array" ||
+              typeof listElement === "object"
+            ) {
+              html = JSON.stringify(listElement);
+              funcInput = encodeURI(JSON.stringify(listElement));
+            }
+            if (appendTo == "destination") {
+              funcInput = index;
+              html = listElement
+                .map(el => el.country + "-" + el.airportCode)
+                .join("    ");
+            }
+
+            node.innerHTML = `<div class='' onclick="demo.onElementClick('${appendTo}','${funcInput}')">${html}</div>`;
+            document.getElementById(appendTo).appendChild(node);
+          });
+        };
+
+        var onElementClick = function(action, param) {
+          if (action === "lang") {
+            widgetOptions.language = param;
+          }
+          if (action === "nationality") {
+            widgetOptions.defaultNationalityCountry = param;
+          }
+          if (action === "destination") {
+            widgetOptions.itinerary = _getItinerary(param);
+          }
+
+          document.getElementById("json").innerHTML = JSON.stringify(
+            widgetOptions,
+            undefined,
+            2
+          );
+          // $sherpa.IcelandAirV1.createWidget(widgetOptions);
+          console.log(widgetOptions)
+          sherpaWidget.setAttribute("content", JSON.stringify(widgetOptions));
+        };
+
+        var onSdkLoaded = function() {
+          // $sherpa.IcelandAirV1.createWidget(widgetOptions);
+          console.log()
+          sherpaWidget.setAttribute("content", JSON.stringify(widgetOptions));
+        };
+
+        return {
+          generateOptionsFor: generateOptionsFor,
+          onElementClick: onElementClick,
+          onSdkLoaded: onSdkLoaded
+        };
+      })();
+
+      demo.generateOptionsFor("lang", lang);
+      demo.generateOptionsFor("nationality", nationality);
+      demo.generateOptionsFor("destination", destinations);
+
+      sherpaWidget.setAttribute("content", JSON.stringify(""));
+    </script>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .demo {
+        padding-bottom: 30px;
+        text-align: center;
+      }
+
+      .demo > * {
+        display: inline-block;
+      }
+
+      .options > div {
+        display: inline-block;
+      }
+
+      .options > div {
+        padding: 10px;
+      }
+
+      .options > div > div {
+        display: inline-block;
+        background-color: whitesmoke;
+        padding: 2px 7px;
+        margin-bottom: 10px;
+        margin-left: 7px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .page {
+        width: 100%;
+        color: silver;
+        overflow: hidden;
+      }
+
+      pre {
+        width: 400px;
+        left: 50%;
+        position: relative;
+        margin-left: -200px;
+        padding: 30px 0px;
+      }
+
+      @media (max-width: 768px) {
+        .page {
+          height: 2000px;
+        }
+      }
+    </style>
+  </body>
+</html>
