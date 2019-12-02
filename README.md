@@ -1,6 +1,6 @@
 # Widget
 
-This is a Angular Widget for Sherpa Travel Requirement. There are css styling issues. You may download the shepa-widget.js and implement into your site by adding `<sherpa-widget></sherpa-widget>` to you DOM will initiate the widget. 
+This is a Angular Widget for Sherpa Travel Requirement. There are CSS styling issues. You may download the shepa-widget.js and implement into your site by adding `<sherpa-widget></sherpa-widget>` to you DOM, this will initiate the widget. 
 
 Options that are to be passed with setAttribute "content" on sherpa-widget are :-
 
